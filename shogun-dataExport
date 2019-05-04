@@ -1,0 +1,72 @@
+//creating an array that will include the start time and the end time of choice
+int $fSTR[];
+
+//define the time range of interest
+selectRange 5000 5010;
+$fSTR =`getSelectedTimeRanges`;
+
+//print "Ranges:" $fSTR;
+//print (getCount($fSTR));
+//print $fSTR [0];
+//print $fSTR [1];
+
+//creating an array, or list, of all the MarkerNodes in the scene
+string $modArray[];
+$modArray = `getModules -type "Marker"`;
+
+//create a plain text file on your computer
+//The following statements open the file and get the file ID, so we can write to the file later
+int $fileID; 
+string $fileName = "d:/test.txt"; 
+$fileID = `fileOpen $fileName "w"`;
+
+
+int $k;
+int $i;
+int $j;
+
+
+writeString $fileID "TIME";
+
+// This returns and prints the elements of a string array of labeled marker names
+
+for( $k = 0; $k < 53; $k += 1 )
+	{
+		//vector $pos = $modArray[$k].getVectorProperty( "Translation" );
+
+		string $a;
+		$a = getStringProperty( $modArray[$k], Name );
+
+		//each label has three coordinates at certain time
+		writeString $fileID " " $a "-x" " " $a "-y" " " $a "-z";
+	}
+
+//The following statements calculate and print the translation value, i.e. position information, for a certain marker at certain time
+for( $i = $fSTR [0]; 
+     $i < $fSTR [1]; 
+     $i += 1 )
+     {
+		setTime $i;
+		//print $i;
+		writeString $fileID "\n";
+
+		// write current time to file
+		writeInt $fileID $i;
+
+		for( $j = 0; $j < 53; $j += 1 )
+			{
+			vector $pos = $modArray[$j].getVectorProperty( "Translation" );
+			//string $a;
+			//$a = getStringProperty( $modArray[$j], Name );
+
+			//print( $a, $pos);
+
+			//write current transilation to the file
+			writeString $fileID " " string($pos);
+			}
+     }
+
+fileClose $fileID;
+
+//After succesfully printing the translation values of selected time range, you can create an excel form and import data from this plain text file you just created.
+//Enjoy!
